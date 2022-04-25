@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en-US" xmlns:og="http://ogp.me/ns#" xmlns:fb="http://ogp.me/ns/fb"
+    class="en js csstransforms csstransforms3d csstransitions">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title> POC - The Level Group</title>
+    <!-- Kentico Custom elements API-->
+    <link rel="stylesheet" href="custom-element.css" />
+    <script src="https://app.kontent.ai/js-api/custom-element/v1/custom-element.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.7/semantic.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+
+    <script type="text/javascript" src="https://unpkg.com/rxjs@6.4.0/bundles/rxjs.umd.min.js"></script>
+    <script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@kentico/kontent-delivery/_bundles/kontent-delivery.browser.umd.min.js"></script>
+
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.410.0.min.js"></script>
+    <style>
+
+    </style>
+
+
+</head>
+
+<body>
+    <br />
+    <div class="ui container">
+        <div class="ui grid">
+            <div class="ui sixteen column">
+                <div id="textToSynth">
+                    <input autofocus size="23" type="text" id="textEntry" value="It's very good to meet you." />
+                    <button class="btn default" onClick="speakText()">Synthesize</button>
+                    <p id="result">Enter text above then click Synthesize</p>
+                </div>
+                <audio id="audioPlayback" controls>
+                    <source id="audioSource" type="audio/mp3" src="">
+                </audio>
+            </div>
+        </div>
+    </div>
+
+    </div>
+    <script>
+        try {
+            CustomElement.setHeight(800);
+        } catch {
+            console.log("not in iFrame");
+        }
+
+        // Initializes the Delivery JS SDK
+        const Kk = window['kontentDelivery'];
+        var scheduledBanners = [];
+
+        // Tip: Change the project ID of the API call to yours to display your own content. Make sure the codenames still match.
+        const deliveryClient = new Kk.DeliveryClient({
+            projectId: '5ba2a1a1-ad54-0100-77c6-5fd2886014f0',
+            previewApiKey: 'ew0KICAiYWxnIjogIkhTMjU2IiwNCiAgInR5cCI6ICJKV1QiDQp9.ew0KICAianRpIjogIjNiMjE3MGM4OWVjYzRlY2FhY2ExODk5ODY0MGIwMmYyIiwNCiAgImlhdCI6ICIxNjQ5ODYzODU4IiwNCiAgImV4cCI6ICIxOTk1NDYzODU4IiwNCiAgInZlciI6ICIxLjAuMCIsDQogICJwcm9qZWN0X2lkIjogIjViYTJhMWExYWQ1NDAxMDA3N2M2NWZkMjg4NjAxNGYwIiwNCiAgImF1ZCI6ICJwcmV2aWV3LmRlbGl2ZXIua2VudGljb2Nsb3VkLmNvbSINCn0.9LXtA1L3KlHI_Elv-lJCimcHZqybNddW8PgsQVIimVQ',
+            globalQueryConfig: {
+                usePreviewMode: true, // Queries the Delivery Preview API.
+                waitForLoadingNewContent: true
+            }
+        });
+
+        // Retrieves the landing page from your project
+        deliveryClient
+            .item("this_is_voice_preview_test")
+            .elementsParameter(['content_from_kontent_by_kentico'])
+            .toPromise()
+            .then(response => {
+                processData(response)
+            });
+
+        function processData(response) {
+            const text = response.item.content_from_kontent_by_kentico.value;
+            document.getElementById("textEntry").value = text;
+        }
+
+
+        // Initialize the Amazon Cognito credentials provider
+        AWS.config.region = 'us-east-1';
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-east-1:40f8d077-496d-411d-a666-4ac9aa7dd913' });
+
+        // Function invoked by button click
+        function speakText() {
+            // Create the JSON parameters for getSynthesizeSpeechUrl
+            var speechParams = {
+                OutputFormat: "mp3",
+                SampleRate: "16000",
+                Text: "",
+                TextType: "text",
+                VoiceId: "Matthew"
+            };
+            speechParams.Text = document.getElementById("textEntry").value;
+
+            // Create the Polly service object and presigner object
+            var polly = new AWS.Polly({ apiVersion: '2016-06-10' });
+            var signer = new AWS.Polly.Presigner(speechParams, polly)
+
+            // Create presigned URL of synthesized speech file
+            signer.getSynthesizeSpeechUrl(speechParams, function (error, url) {
+                if (error) {
+                    document.getElementById('result').innerHTML = error;
+                } else {
+                    document.getElementById('audioSource').src = url;
+                    document.getElementById('audioPlayback').load();
+                    document.getElementById('result').innerHTML = "Speech ready to play.";
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
