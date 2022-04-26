@@ -64,7 +64,7 @@
                 speakText(value);
             });
 
-            CustomElement.observeElementChanges("content_from_kontent_by_kentico", (changedElementCodenames) => {
+            CustomElement.observeElementChanges(["content_from_kontent_by_kentico"], (changedElementCodenames) => {
                 CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
                     speakText(value);
                 });
