@@ -37,7 +37,6 @@
             <div class="ui sixteen column">
                 Available Voices
                 <select id="VoiceId">
-                    <option value="">Select voice</option>
                     <option value="Ivy">Ivy (Female (child))</option>
                     <option value="Joanna">Joanna (Female)</option>
                     <option value="Kendra">Kendra (Female)</option>
@@ -46,7 +45,7 @@
                     <option value="Joey">Joey (Male)</option>
                     <option value="Justin">Justin (Male (child))</option>
                     <option value="Kevin">Kevin (Male (child))</option>
-                    <option value="Matthew">Matthew (Male)</option>
+                    <option value="Matthew" selected>Matthew (Male)</option>
                 </select><br/>
                 <audio id="audioPlayback" controls>
                     <source id="audioSource" type="audio/mp3" src="">
@@ -95,7 +94,7 @@
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: voiceID = "" ? "Matthew" : voiceID
+                VoiceId: voiceID
             };
             speechParams.Text = text;
 
