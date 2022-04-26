@@ -47,10 +47,10 @@
                     <option value="Justin">Justin (Male (child))</option>
                     <option value="Kevin">Kevin (Male (child))</option>
                     <option value="Matthew">Matthew (Male)</option>
-                </select>
+                </select><br/>
                 <audio id="audioPlayback" controls>
                     <source id="audioSource" type="audio/mp3" src="">
-                </audio>
+                </audio><br/.>
                 <p id="result"></p>
             </div>
         </div>
@@ -59,7 +59,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            CustomElement.setHeight(100);
+            CustomElement.setHeight(150);
             CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
                 speakText(value);
             });
@@ -95,7 +95,7 @@
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: voiceID ? "Matthew" : voiceID
+                VoiceId: voiceID = "" ? "Matthew" : voiceID
             };
             speechParams.Text = text;
 
