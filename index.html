@@ -35,9 +35,23 @@
     <div class="ui container">
         <div class="ui grid">
             <div class="ui sixteen column">
+                Available Voices
+                <select id="VoiceId">
+                    <option value="">Select voice</option>
+                    <option value="Ivy">Ivy (Female (child))</option>
+                    <option value="Joanna">Joanna (Female)</option>
+                    <option value="Kendra">Kendra (Female)</option>
+                    <option value="Kimberly">Kimberly (Female)</option>
+                    <option value="Salli">Salli (Female)</option>
+                    <option value="Joey">Joey (Male)</option>
+                    <option value="Justin">Justin (Male (child))</option>
+                    <option value="Kevin">Kevin (Male (child))</option>
+                    <option value="Matthew">Matthew (Male)</option>
+                </select>
                 <audio id="audioPlayback" controls>
                     <source id="audioSource" type="audio/mp3" src="">
                 </audio>
+                <p id="result"></p>
             </div>
         </div>
     </div>
@@ -45,7 +59,7 @@
     </div>
     <script>
         $(document).ready(function () {
-            CustomElement.setHeight(300);
+            CustomElement.setHeight(100);
             CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
                 speakText(value);
             });
@@ -54,6 +68,8 @@
                 CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
                     speakText(value);
                 });
+                console.log("something changed")
+                console.log(changedElementCodenames[0])
             });
 
         });
@@ -64,15 +80,22 @@
         AWS.config.region = 'us-east-1';
         AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-east-1:40f8d077-496d-411d-a666-4ac9aa7dd913' });
 
+        function removeHTML(text) {
+            let htmless = text.replace(/<(?:.|\n)*?>/gm, "");
+            return htmless.replace(/&nbsp;/gi, "");
+        }
+
         // Function invoked by button click
         function speakText(text) {
             // Create the JSON parameters for getSynthesizeSpeechUrl
+            var voiceID = document.getElementById('VoiceId').value;
+
             var speechParams = {
                 OutputFormat: "mp3",
                 SampleRate: "16000",
                 Text: "",
                 TextType: "text",
-                VoiceId: "Matthew"
+                VoiceId: voiceID ? "Matthew" : voiceID
             };
             speechParams.Text = text;
 
