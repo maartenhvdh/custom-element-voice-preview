@@ -35,8 +35,9 @@
     <div class="ui container">
         <div class="ui grid">
             <div class="ui sixteen column">
-                Available Voices
-                <select id="VoiceId">
+                <input type="hidden" id="textEntry" />
+                Available Voices : 
+                <select id="VoiceId" onchange="speakText()">
                     <option value="Ivy">Ivy (Female (child))</option>
                     <option value="Joanna">Joanna (Female)</option>
                     <option value="Kendra">Kendra (Female)</option>
@@ -46,10 +47,10 @@
                     <option value="Justin">Justin (Male (child))</option>
                     <option value="Kevin">Kevin (Male (child))</option>
                     <option value="Matthew" selected>Matthew (Male)</option>
-                </select><br/>
+                </select><br/><br/>
                 <audio id="audioPlayback" controls>
                     <source id="audioSource" type="audio/mp3" src="">
-                </audio><br/.>
+                </audio><br/>
                 <p id="result"></p>
             </div>
         </div>
@@ -60,17 +61,17 @@
         $(document).ready(function () {
             CustomElement.setHeight(150);
             CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
-                speakText(value);
+                textEntry.value = value
+                speakText();
             });
-
             CustomElement.observeElementChanges(["content_from_kontent_by_kentico"], (changedElementCodenames) => {
                 CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
-                    speakText(value);
+                    textEntry.value = value
+                    speakText();
                 });
                 console.log("something changed")
                 console.log(changedElementCodenames[0])
             });
-
         });
 
 
@@ -85,7 +86,7 @@
         }
 
         // Function invoked by button click
-        function speakText(text) {
+        function speakText() {
             // Create the JSON parameters for getSynthesizeSpeechUrl
             var voiceID = document.getElementById('VoiceId').value;
 
@@ -96,7 +97,7 @@
                 TextType: "text",
                 VoiceId: voiceID
             };
-            speechParams.Text = text;
+            speechParams.Text = textEntry.value;
 
             // Create the Polly service object and presigner object
             var polly = new AWS.Polly({ apiVersion: '2016-06-10' });
