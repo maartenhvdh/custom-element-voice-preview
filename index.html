@@ -46,12 +46,16 @@
     <script>
         $(document).ready(function () {
             CustomElement.setHeight(300);
-
-            CustomElement.init((element, _context) => {
-
-                CustomElement.getElementValue("content_from_kontent_by_kentico", speakText(value));
-
+            CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
+                speakText(value);
             });
+
+            CustomElement.observeElementChanges("content_from_kontent_by_kentico", (changedElementCodenames) => {
+                CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
+                    speakText(value);
+                });
+            });
+
         });
 
 
