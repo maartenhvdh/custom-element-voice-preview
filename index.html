@@ -36,7 +36,7 @@
         <div class="ui grid">
             <div class="ui sixteen column">
                 <input type="hidden" id="textEntry" />
-                Available Voices : 
+                Available Voices :
                 <select id="VoiceId" onchange="speakText()">
                     <option value="Ivy">Ivy (Female (child))</option>
                     <option value="Joanna">Joanna (Female)</option>
@@ -47,10 +47,10 @@
                     <option value="Justin">Justin (Male (child))</option>
                     <option value="Kevin">Kevin (Male (child))</option>
                     <option value="Matthew" selected>Matthew (Male)</option>
-                </select><br/><br/>
+                </select><br /><br />
                 <audio id="audioPlayback" controls>
                     <source id="audioSource" type="audio/mp3" src="">
-                </audio><br/>
+                </audio><br />
                 <p id="result"></p>
             </div>
         </div>
@@ -59,19 +59,25 @@
     </div>
     <script>
         $(document).ready(function () {
-            CustomElement.setHeight(150);
-            CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
-                textEntry.value = value
-                speakText();
-            });
-            CustomElement.observeElementChanges(["content_from_kontent_by_kentico"], (changedElementCodenames) => {
-                CustomElement.getElementValue("content_from_kontent_by_kentico", (value) => {
+            CustomElement.init((element, _context) => {
+                config = element.config || {};
+                elementName = config.fieldname;
+
+                CustomElement.setHeight(150);
+                CustomElement.getElementValue(elementName, (value) => {
                     textEntry.value = value
                     speakText();
                 });
-                console.log("something changed")
-                console.log(changedElementCodenames[0])
-            });
+                CustomElement.observeElementChanges([elementName], (changedElementCodenames) => {
+                    CustomElement.getElementValue(elementName, (value) => {
+                        textEntry.value = value
+                        speakText();
+                    });
+                    console.log("something changed")
+                    console.log(changedElementCodenames[0])
+                });
+
+            });            
         });
 
 
